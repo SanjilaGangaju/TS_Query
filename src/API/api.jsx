@@ -6,8 +6,16 @@ const api =
 })
   
 export const fetchPosts=async()=>{
-    return await api.get("/posts")
+    try{
+        return await api.get("/posts")
+    }
+    catch(error){
+        console.log(error)
+
+    }
+    
 }
+
 export const fetchInvPost = async(id)=>{
     try{
         const res= await api.get(`/posts/${id}`)
@@ -17,5 +25,16 @@ export const fetchInvPost = async(id)=>{
         console.log(error);
     }
 }
+export const createPost = async(newPost)=>{
+    try{
+        const res= await api.post('/posts')
+        return res;
+    }
+    catch(error){
+        console.log(error)
+    }
+
+}
 
 export default api
+
