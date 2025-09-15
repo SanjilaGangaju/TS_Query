@@ -1,46 +1,45 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { ClipLoader } from "react-spinners";
+import { useAddProduct, useProducts } from '../hooks/UseProducts';
 
 
 const ProductList = () => {
     
-    const api = 'https://fakestoreapi.com'
-
-    async function fetchProducts(){
-      try{
-          const res = await fetch(`${api}/products`)
-    
-      const  data = await res.json()
-      return data
-      }
-      catch(error){
-        console.log(error) 
-      }
-    
-      
-
+   const {data, isFetching, isLoading, error, isSuccess} = useProducts();
+   const addProduct = useAddProduct();
+   const handleAdd = async()=>{
+    try{
+       addProduct.mutate({
+        title: "Pink bottle",
+        price: 30,
+      });
     }
-    
-    const {data, isLoading ,error, isSuccess, isFetching} = useQuery({queryKey:['products'],
-      queryFn: fetchProducts,
-    })
+    catch(err){
+      console.log(error)
+    }
+   }
     if (isLoading){
       return <ClipLoader></ClipLoader>
     }
     if (error){
       return <div>Error: {error.message}</div>
     }
-    if (isFetching){
-      return <div>fetching</div>
-    }
+    
+   
     
   return (
     <div>
+      <button onClick={handleAdd} disabled={addProduct.isPending}> {addProduct.isPending ? "Adding…" : "Add product"}</button>
 
+     <div>
       Product List 
-      {isSuccess&& data?.map(item=><p key={item.title}>{item.title}</p>)
-}
+      {isSuccess&& data?.map(item=><p key={item.title}>{item.title}</p>)}
+      {isFetching && <div>fetching...</div>}
+       
+     </div>
+      
+
     </div>
   )
 }
